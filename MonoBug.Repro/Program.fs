@@ -17,14 +17,14 @@ let fb = foob.DefineField("value", t, FieldAttributes.Public)
 let foo = foob.CreateType()
 let f = foo.GetField("value")
 
-// define a static class Bar with generic method Bar.Get : Foo<'T> -> 'T
+// define a static class Bar with generic method Bar.Get : Foo<'a> -> 'a
 
 let barb = mb.DefineType("Bar", TypeAttributes.Public)
 
 let getB = barb.DefineMethod("Get", MethodAttributes.Public ||| MethodAttributes.Static)
-let tb = getB.DefineGenericParameters([| "T" |]).[0]
-getB.SetReturnType tb
-let fooT = foo.MakeGenericType [| tb :> Type |]
+let a = getB.DefineGenericParameters([| "a" |]).[0]
+getB.SetReturnType a
+let fooT = foo.MakeGenericType [| a :> Type |]
 getB.SetParameters([| fooT |])
 
 // emit method body
@@ -51,6 +51,6 @@ let field =
     |> Seq.pick(fun i -> match i.Operand with :? FieldInfo as f -> Some f | _ -> None)
 
 
-printfn "%O" <| field.ToString() // "T item"
+printfn "%O" <| field.ToString() // "a value"
 
 printfn "%d" field.MetadataToken // crashes in mono  
